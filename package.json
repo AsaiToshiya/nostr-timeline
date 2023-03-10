@@ -23,5 +23,12 @@
   "homepage": "https://github.com/AsaiToshiya/node-boilerplate#readme",
   "engines": {
     "node": ">=14.16"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "github-markdown-css": "^5.2.0",
+    "marked": "^4.2.12",
+    "nostr-tools": "^1.7.4",
+    "websocket-polyfill": "^0.0.3"
   }
 }
