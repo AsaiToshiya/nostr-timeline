@@ -57,21 +57,6 @@ const following = (
 // ベースのアカウントとフォローの pubkey
 const authors = [PK, ...following.tags?.map((tag) => tag[1])];
 
-// プロフィール
-const profiles = (
-  await pool.list(RELAYS, [
-    {
-      authors,
-      kinds: [0],
-    },
-  ])
-)
-  .sort(byCreateAt)
-  .reduce(
-    (acc, obj) => ({ ...acc, [obj.pubkey]: JSON.parse(obj.content) }),
-    {}
-  );
-
 // 投稿
 const posts = (
   await pool.list(RELAYS, [
@@ -83,6 +68,24 @@ const posts = (
     },
   ])
 ).sort(byCreateAtDesc);
+
+// 投稿者の pubkey
+const postAuthors = posts.map((post) => post.pubkey);
+
+// プロフィール
+const profiles = (
+  await pool.list(RELAYS, [
+    {
+      authors: postAuthors,
+      kinds: [0],
+    },
+  ])
+)
+  .sort(byCreateAt)
+  .reduce(
+    (acc, obj) => ({ ...acc, [obj.pubkey]: JSON.parse(obj.content) }),
+    {}
+  );
 
 // HTML を作成する
 const date = yesterday.toLocaleDateString();
