@@ -13,6 +13,10 @@ const PK = nip19.decode(process.env.NPUB).data;
 // リレー サーバー
 const RELAYS = JSON.parse(process.env.RELAYS.replace(/'/g, '"'));
 
+marked.setOptions({
+  breaks: true,
+});
+
 const byCreateAt = (a, b) => a.created_at - b.created_at;
 
 const byCreateAtDesc = (a, b) => b.created_at - a.created_at;
