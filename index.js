@@ -58,8 +58,8 @@ const following = (
   .sort(byCreateAtDesc)
   .shift();
 
-// ベースのアカウントとフォローの pubkey
-const authors = [PK, ...following.tags?.map((tag) => tag[1])];
+// フォローの pubkey
+const authors = following.tags?.map((tag) => tag[1]);
 
 // 投稿
 const posts = (
