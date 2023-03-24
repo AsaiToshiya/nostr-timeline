@@ -125,7 +125,12 @@ const html =
       const author = profiles[post.pubkey] ?? {};
       const displayName = author.display_name ?? author.displayName;
       const name = author.name ?? author.username;
-      const content = marked.parse(escape(post.content));
+      const content = marked.parse(
+        escape(post.content).replace(
+          /(https?:\/\/\S+\.(jpg|jpeg|png|webp|avif|gif))/g,
+          '<a href="$1"><img src="$1" loading="lazy" style="max-width: 600px;"></a>'
+        )
+      );
       const date = new Date(post.created_at * 1000);
       const time = date.toLocaleTimeString();
       return `      <p>${displayName}@${name}</p>
