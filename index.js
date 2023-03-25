@@ -37,7 +37,23 @@ const getTodayWithoutTime = () => {
   return Math.floor(today.getTime() / 1000);
 };
 
-const todayUnixTime = getTodayWithoutTime();
+// UNIX 時間を返す
+const getTomorrowWithoutTime = (date) => {
+  const tomorrow = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  return Math.floor(tomorrow.getTime() / 1000);
+};
+
+const args = process.argv.slice(2);
+const [option, value] = args;
+const todayUnixTime =
+  option == "-d" || option == "--date"
+    ? getTomorrowWithoutTime(new Date(value))
+    : getTodayWithoutTime();
 const yesterdayUnixTime = todayUnixTime - 86400;
 const yesterday = new Date(yesterdayUnixTime * 1000);
 
