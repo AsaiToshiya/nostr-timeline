@@ -53,7 +53,7 @@ const [option, value] = args;
 const todayUnixTime =
   option == "-d" || option == "--date"
     ? getTomorrowWithoutTime(new Date(value))
-    : getTodayWithoutTime();
+    : getTomorrowWithoutTime(new Date());
 const yesterdayUnixTime = todayUnixTime - 86400;
 const yesterday = new Date(yesterdayUnixTime * 1000);
 
