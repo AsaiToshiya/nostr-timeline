@@ -130,6 +130,12 @@ const html =
             padding: 15px;
           }
         }
+
+        @media screen and (max-width: 600px) {
+          img {
+            max-width: 100%;
+          }
+        }
       </style>
       <title>${date} のタイムライン</title>
     </head>
