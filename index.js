@@ -77,17 +77,36 @@ const following = (
 // フォローの pubkey
 const authors = following.tags?.map((tag) => tag[1]);
 
+// チャンク化する
+const chunkSize = 250;
+const chunkedAuthors = authors.reduce((acc, obj, index) => {
+  const chunkIndex = Math.floor(index / chunkSize);
+  const chunk = acc[chunkIndex] ?? [];
+  return [
+    ...acc.slice(0, chunkIndex),
+    [...chunk, obj],
+    ...acc.slice(chunkIndex + 1),
+  ];
+}, []);
+
 // 投稿
 const posts = (
-  await pool.list(RELAYS, [
-    {
-      authors,
-      kinds: [1],
-      since: yesterdayUnixTime - 1,
-      until: todayUnixTime,
-    },
-  ])
-).sort(byCreateAtDesc);
+  await Promise.all(
+    chunkedAuthors.map(
+      async (authors) =>
+        await pool.list(RELAYS, [
+          {
+            authors,
+            kinds: [1],
+            since: yesterdayUnixTime - 1,
+            until: todayUnixTime,
+          },
+        ])
+    )
+  )
+)
+  .flat()
+  .sort(byCreateAtDesc);
 
 // 投稿者の pubkey
 const postAuthors = posts.map((post) => post.pubkey);
