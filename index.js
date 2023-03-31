@@ -27,8 +27,7 @@ const escape = (s) =>
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;")
-    .replace(/ /g, "&nbsp;");
+    .replace(/'/g, "&#039;");
 
 // UNIX 時間を返す
 const getTodayWithoutTime = () => {
