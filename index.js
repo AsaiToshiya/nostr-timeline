@@ -163,7 +163,7 @@ const html =
   posts
     .map((post) => {
       const author = profiles[post.pubkey] ?? {};
-      const displayName = author.display_name ?? author.displayName;
+      const displayName = author.display_name ?? author.displayName ?? "";
       const name = author.name ?? author.username;
       const content = marked.parse(
         escape(post.content).replace(
