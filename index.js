@@ -174,7 +174,7 @@ const html =
       const date = new Date(post.created_at * 1000);
       const time = date.toLocaleTimeString();
       return `      <p>${displayName}@${name}</p>
-      <p>${content}</p>
+      ${content}
       <p>${time}</p>`;
     })
     .join("\n") +
