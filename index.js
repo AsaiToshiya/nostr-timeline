@@ -29,6 +29,36 @@ const escape = (s) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 
+const fetchPosts = async (relay, authors, since, until, olderPost) => {
+  const posts = (
+    await pool.list(
+      [relay],
+      [
+        {
+          authors,
+          kinds: [1],
+          since,
+          until,
+          limit: 200,
+        },
+      ]
+    )
+  ).sort(byCreateAtDesc);
+  const oldestPost = posts[posts.length - 1];
+  return [
+    ...(oldestPost && oldestPost.id !== olderPost?.id
+      ? await fetchPosts(
+          relay,
+          authors,
+          since,
+          oldestPost.created_at,
+          oldestPost
+        )
+      : []),
+    ...posts,
+  ];
+};
+
 // UNIX 時間を返す
 const getTodayWithoutTime = () => {
   const now = new Date();
@@ -89,23 +119,31 @@ const chunkedAuthors = authors.reduce((acc, obj, index) => {
 }, []);
 
 // 投稿
-const posts = (
-  await Promise.all(
-    chunkedAuthors.map(
-      async (authors) =>
-        await pool.list(RELAYS, [
-          {
-            authors,
-            kinds: [1],
-            since: yesterdayUnixTime - 1,
-            until: todayUnixTime,
-          },
-        ])
+const posts = [
+  ...new Map(
+    (
+      await Promise.all(
+        RELAYS.map(async (relay) =>
+          (
+            await Promise.all(
+              chunkedAuthors.map(
+                async (authors) =>
+                  await fetchPosts(
+                    relay,
+                    authors,
+                    yesterdayUnixTime - 1,
+                    todayUnixTime
+                  )
+              )
+            )
+          ).flat()
+        )
+      )
     )
-  )
-)
-  .flat()
-  .sort(byCreateAtDesc);
+      .flat()
+      .map((obj) => [obj.id, obj])
+  ).values(),
+].sort(byCreateAtDesc);
 
 // 投稿者の pubkey
 const postAuthors = posts.map((post) => post.pubkey);
