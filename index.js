@@ -198,6 +198,10 @@ const html =
           }
         }
 
+        img {
+          max-width: 600px;
+        }
+
         @media screen and (max-width: 600px) {
           img {
             max-width: 100%;
@@ -217,7 +221,7 @@ const html =
       const content = marked.parse(
         escape(post.content).replace(
           /(https?:\/\/\S+\.(jpg|jpeg|png|webp|avif|gif))/g,
-          '<a href="$1"><img src="$1" loading="lazy" style="max-width: 600px;"></a>'
+          '<a href="$1"><img src="$1" loading="lazy"></a>'
         )
       );
       const date = new Date(post.created_at * 1000);
