@@ -78,11 +78,20 @@ const getTomorrowWithoutTime = (date) => {
 };
 
 const args = process.argv.slice(2);
-const [option, value] = args;
+const [option1, value1, option2, value2] = args;
 const todayUnixTime =
-  option == "-d" || option == "--date"
-    ? getTomorrowWithoutTime(new Date(value))
+  option1 == "-d" || option1 == "--date"
+    ? getTomorrowWithoutTime(new Date(value1))
+    : option2 == "-d" || option2 == "--date"
+    ? getTomorrowWithoutTime(new Date(value2))
     : getTomorrowWithoutTime(new Date());
+const excludeUsers = (
+  option1 == "-e" || option1 == "--exclude"
+    ? value1.split(",")
+    : option2 == "-e" || option2 == "--exclude"
+    ? value2.split(",")
+    : []
+).map((npub) => nip19.decode(npub).data);
 const yesterdayUnixTime = todayUnixTime - 86400;
 const yesterday = new Date(yesterdayUnixTime * 1000);
 
@@ -104,7 +113,9 @@ const following = (
   .shift();
 
 // フォローの pubkey
-const authors = following.tags?.map((tag) => tag[1]);
+const authors = following.tags
+  ?.map((tag) => tag[1])
+  .filter((pk) => !excludeUsers.includes(pk));
 
 // チャンク化する
 const chunkSize = 250;
