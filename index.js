@@ -17,6 +17,23 @@ marked.setOptions({
   breaks: true,
 });
 
+const _parseArgs = (option1, value1, option2, value2) => {
+  const todayUnixTime =
+    option1 == "-d" || option1 == "--date"
+      ? getTomorrowWithoutTime(new Date(value1))
+      : option2 == "-d" || option2 == "--date"
+      ? getTomorrowWithoutTime(new Date(value2))
+      : getTomorrowWithoutTime(new Date());
+  const excludeUsers = (
+    option1 == "-e" || option1 == "--exclude"
+      ? value1.split(",")
+      : option2 == "-e" || option2 == "--exclude"
+      ? value2.split(",")
+      : []
+  ).map((npub) => nip19.decode(npub).data);
+  return { todayUnixTime, excludeUsers };
+};
+
 const byCreateAt = (a, b) => a.created_at - b.created_at;
 
 const byCreateAtDesc = (a, b) => b.created_at - a.created_at;
@@ -78,20 +95,7 @@ const getTomorrowWithoutTime = (date) => {
 };
 
 const args = process.argv.slice(2);
-const [option1, value1, option2, value2] = args;
-const todayUnixTime =
-  option1 == "-d" || option1 == "--date"
-    ? getTomorrowWithoutTime(new Date(value1))
-    : option2 == "-d" || option2 == "--date"
-    ? getTomorrowWithoutTime(new Date(value2))
-    : getTomorrowWithoutTime(new Date());
-const excludeUsers = (
-  option1 == "-e" || option1 == "--exclude"
-    ? value1.split(",")
-    : option2 == "-e" || option2 == "--exclude"
-    ? value2.split(",")
-    : []
-).map((npub) => nip19.decode(npub).data);
+const { todayUnixTime, excludeUsers } = _parseArgs(...args);
 const yesterdayUnixTime = todayUnixTime - 86400;
 const yesterday = new Date(yesterdayUnixTime * 1000);
 
