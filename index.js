@@ -20,10 +20,10 @@ marked.setOptions({
 const _parseArgs = (option1, value1, option2, value2) => {
   const todayUnixTime =
     option1 == "-d" || option1 == "--date"
-      ? getTomorrowWithoutTime(new Date(value1))
+      ? new Date(value1)
       : option2 == "-d" || option2 == "--date"
-      ? getTomorrowWithoutTime(new Date(value2))
-      : getTomorrowWithoutTime(new Date());
+      ? new Date(value2)
+      : new Date();
   const excludeUsers = (
     option1 == "-e" || option1 == "--exclude"
       ? value1.split(",")
@@ -31,7 +31,7 @@ const _parseArgs = (option1, value1, option2, value2) => {
       ? value2.split(",")
       : []
   ).map((npub) => nip19.decode(npub).data);
-  return { todayUnixTime, excludeUsers };
+  return { todayUnixTime: getTomorrowWithoutTime(todayUnixTime), excludeUsers };
 };
 
 const byCreateAt = (a, b) => a.created_at - b.created_at;
