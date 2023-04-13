@@ -92,12 +92,15 @@ const excludeUsers = (
     ? value2.split(",")
     : []
 ).map((npub) => nip19.decode(npub).data);
+const timeoutIndex = args.indexOf("-t") || args.indexOf("--timeout");
+const hasTimeout = timeoutIndex > -1;
+const timeout = hasTimeout ? args[timeoutIndex + 1] : 3 * 60 * 1000;
 const yesterdayUnixTime = todayUnixTime - 86400;
 const yesterday = new Date(yesterdayUnixTime * 1000);
 
 const pool = new SimplePool({
-  eoseSubTimeout: 3 * 60 * 1000,
-  getTimeout: 3 * 60 * 1000,
+  eoseSubTimeout: timeout,
+  getTimeout: timeout,
 });
 
 // フォロー
