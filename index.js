@@ -233,6 +233,7 @@ const html =
             /NIP-(\d{2})/g,
             '<a href="https://github.com/nostr-protocol/nips/blob/master/$1.md">$&</a>'
           )
+          .replace(/^#+ /g, "\\$&")
       );
       const date = new Date(post.created_at * 1000);
       const time = date.toLocaleTimeString();
