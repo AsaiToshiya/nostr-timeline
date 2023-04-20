@@ -84,12 +84,8 @@ const todayUnixTime =
   dateIndex > -1
     ? getTomorrowWithoutTime(new Date(args[dateIndex + 1]))
     : getTomorrowWithoutTime(new Date());
-const excludeUsers =
-  option1 == "-e" || option1 == "--exclude"
-    ? value1.split(",")
-    : option2 == "-e" || option2 == "--exclude"
-    ? value2.split(",")
-    : [];
+const excludeIndex = args.indexOf("-e") || args.indexOf("--exclude");
+const excludeUsers = excludeIndex > -1 ? args[excludeIndex + 1].split(",") : [];
 const timeoutIndex = args.indexOf("-t") || args.indexOf("--timeout");
 const hasTimeout = timeoutIndex > -1;
 const timeout = hasTimeout ? args[timeoutIndex + 1] : 3 * 60 * 1000;
