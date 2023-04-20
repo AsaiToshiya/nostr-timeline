@@ -79,11 +79,10 @@ const getTomorrowWithoutTime = (date) => {
 
 const args = process.argv.slice(2);
 const [option1, value1, option2, value2] = args;
+const dateIndex = args.indexOf("-d") || args.indexOf("--date");
 const todayUnixTime =
-  option1 == "-d" || option1 == "--date"
-    ? getTomorrowWithoutTime(new Date(value1))
-    : option2 == "-d" || option2 == "--date"
-    ? getTomorrowWithoutTime(new Date(value2))
+  dateIndex > -1
+    ? getTomorrowWithoutTime(new Date(args[dateIndex + 1]))
     : getTomorrowWithoutTime(new Date());
 const excludeUsers =
   option1 == "-e" || option1 == "--exclude"
