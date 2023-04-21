@@ -77,7 +77,7 @@ const getTomorrowWithoutTime = (date) => {
   return Math.floor(tomorrow.getTime() / 1000);
 };
 
-const args = process.argv.slice(2);
+const args = process.argv;
 const [option1, value1, option2, value2] = args;
 const dateIndex = args.indexOf("-d") || args.indexOf("--date");
 const todayUnixTime =
