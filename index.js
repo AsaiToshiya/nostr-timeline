@@ -114,6 +114,7 @@ const following = (
     },
   ])
 )
+  .filter((following) => following.tags && following.tags.length > 0)
   .sort(byCreateAtDesc)
   .shift();
 
