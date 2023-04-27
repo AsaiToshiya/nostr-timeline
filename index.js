@@ -31,7 +31,10 @@ const _parseArgs = (option1, value1, option2, value2) => {
       ? value2.split(",")
       : []
   ).map((npub) => nip19.decode(npub).data);
-  return { todayUnixTime: getTomorrowWithoutTime(todayUnixTime), excludeUsers };
+  return {
+    todayUnixTime: getTomorrowWithoutTime(todayUnixTime) - 86400,
+    excludeUsers,
+  };
 };
 
 const byCreateAt = (a, b) => a.created_at - b.created_at;
@@ -96,8 +99,8 @@ const getTomorrowWithoutTime = (date) => {
 
 const args = process.argv.slice(2);
 const { todayUnixTime, excludeUsers } = _parseArgs(...args);
-const yesterdayUnixTime = todayUnixTime - 86400;
-const yesterday = new Date(yesterdayUnixTime * 1000);
+const yesterdayUnixTime = todayUnixTime + 86400;
+const yesterday = new Date(todayUnixTime * 1000);
 
 const pool = new SimplePool({
   eoseSubTimeout: 3 * 60 * 1000,
@@ -146,8 +149,8 @@ const posts = [
                   await fetchPosts(
                     relay,
                     authors,
-                    yesterdayUnixTime - 1,
-                    todayUnixTime
+                    todayUnixTime - 1,
+                    yesterdayUnixTime
                   )
               )
             )
