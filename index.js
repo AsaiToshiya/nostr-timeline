@@ -17,7 +17,7 @@ marked.setOptions({
   breaks: true,
 });
 
-const _parseArgs = (option1, value1, option2, value2) => {
+const _parseArgs = (args, option1, value1, option2, value2) => {
   const todayUnixTime =
     option1 == "-d" || option1 == "--date"
       ? new Date(value1)
@@ -31,9 +31,13 @@ const _parseArgs = (option1, value1, option2, value2) => {
       ? value2.split(",")
       : []
   ).map((npub) => nip19.decode(npub).data);
+  const timeoutIndex = args.indexOf("-t") || args.indexOf("--timeout");
+  const hasTimeout = timeoutIndex > -1;
+  const timeout = hasTimeout ? args[timeoutIndex + 1] : 3 * 60 * 1000;
   return {
     todayUnixTime: getTomorrowWithoutTime(todayUnixTime) - 86400,
     excludeUsers,
+    timeout,
   };
 };
 
@@ -98,13 +102,13 @@ const getTomorrowWithoutTime = (date) => {
 };
 
 const args = process.argv.slice(2);
-const { todayUnixTime, excludeUsers } = _parseArgs(...args);
+const { todayUnixTime, excludeUsers, timeout } = _parseArgs(args, ...args);
 const yesterdayUnixTime = todayUnixTime + 86400;
 const yesterday = new Date(todayUnixTime * 1000);
 
 const pool = new SimplePool({
-  eoseSubTimeout: 3 * 60 * 1000,
-  getTimeout: 3 * 60 * 1000,
+  eoseSubTimeout: timeout,
+  getTimeout: timeout,
 });
 
 // フォロー
