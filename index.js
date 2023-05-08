@@ -227,6 +227,7 @@ const html =
 ` +
   filteredPosts
     .map((post) => {
+      const npub = nip19.npubEncode(post.pubkey);
       const author = profiles[post.pubkey] ?? {};
       const displayName = author.display_name ?? author.displayName ?? "";
       const name = author.name ?? author.username;
@@ -244,7 +245,7 @@ const html =
       );
       const date = new Date(post.created_at * 1000);
       const time = date.toLocaleTimeString();
-      return `      <p>${displayName}@${name}</p>
+      return `      <p><a href="https://iris.to/${npub}">${displayName}@${name}</a></p>
       ${content}
       <p>${time}</p>`;
     })
