@@ -242,6 +242,10 @@ const html =
             '<a href="https://github.com/nostr-protocol/nips/blob/master/$1.md">$&</a>'
           )
           .replace(/^#+ /g, "\\$&")
+          .replace(
+            /DIP-(\d{2})/g,
+            '<a href="https://github.com/damus-io/dips/blob/master/$1.md">$&</a>'
+          )
       );
       const date = new Date(post.created_at * 1000);
       const time = date.toLocaleTimeString();
