@@ -3,22 +3,18 @@ lockfileVersion: 5.4
 specifiers:
   dotenv: ^16.0.3
   github-markdown-css: ^5.2.0
-  marked: ^4.2.12
-  nostr-tools: ^1.7.4
+  marked: ^5.0.1
+  nostr-tools: ^1.10.1
   websocket-polyfill: ^0.0.3
 
 dependencies:
   dotenv: 16.0.3
   github-markdown-css: 5.2.0
-  marked: 4.2.12
-  nostr-tools: 1.7.4
+  marked: 5.0.1
+  nostr-tools: 1.10.1
   websocket-polyfill: 0.0.3
 
 packages:
-
-  /@noble/hashes/1.0.0:
-    resolution: {integrity: sha512-DZVbtY62kc3kkBtMHqwCOfXrT/hnoORy5BJ4+HU1IR59X0KWAOqsfzQPcUl/lQLlG7qXbe/fZ3r/emxtAl+sqg==}
-    dev: false
 
   /@noble/hashes/1.2.0:
     resolution: {integrity: sha512-FZfhjEDbT5GRswV3C6uvLPHMiVD6lQBmpoX5+eSiPaMTXte/IKqI5dykDxzZB/WBeK/CDuQRBWarPdi3FNY2zQ==}
@@ -32,8 +28,8 @@ packages:
     resolution: {integrity: sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==}
     dev: false
 
-  /@scure/bip32/1.1.5:
-    resolution: {integrity: sha512-XyNh1rB0SkEqd3tXcXMi+Xe1fvg+kUIcoRIEujP1Jgv7DqW2r9lg3Ah0NkFaCs9sTkQAQA8kw7xiRXzENi9Rtw==}
+  /@scure/bip32/1.1.4:
+    resolution: {integrity: sha512-m925ACYK0wPELsF7Z/VdLGmKj1StIeHraPMYB9xiAFiq/PnvqWd/99I0TQ2OZhjjlMDsDJeZlyXMWi0beaA7NA==}
     dependencies:
       '@noble/hashes': 1.2.0
       '@noble/secp256k1': 1.7.1
@@ -117,9 +113,9 @@ packages:
     resolution: {integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==}
     dev: false
 
-  /marked/4.2.12:
-    resolution: {integrity: sha512-yr8hSKa3Fv4D3jdZmtMMPghgVt6TWbk86WQaWhDloQjRSQhMMYCAro7jP7VDJrjjdV8pxVxMssXS8B8Y5DZ5aw==}
-    engines: {node: '>= 12'}
+  /marked/5.0.1:
+    resolution: {integrity: sha512-Nn9peC4lvIZdcfp8Uze6xk4ZYowkcj/K6+e/6rLHadhtjqeip/bYRxMgt3124IGGJ3RPs2uX5YVmAGbUutY18g==}
+    engines: {node: '>= 18'}
     hasBin: true
     dev: false
 
@@ -136,21 +132,14 @@ packages:
     hasBin: true
     dev: false
 
-  /nostr-tools/1.7.4:
-    resolution: {integrity: sha512-YowDJ+S3UW9KCYPDZfZXXMITrJSMjiCmFOK5HohyKkg+w6EipFUTkFRBPRA2BTLXO/qw8gukKXfL0B7Dv3jtcQ==}
+  /nostr-tools/1.10.1:
+    resolution: {integrity: sha512-zgTYJeuZQ3CDASsmBEcB5i6V6l0IaA6cjnll6OVik3FoZcvbCaL7yP8I40hYnOIi3KlJykV7jEF9fn8h1NzMnA==}
     dependencies:
-      '@noble/hashes': 1.0.0
+      '@noble/hashes': 1.2.0
       '@noble/secp256k1': 1.7.1
       '@scure/base': 1.1.1
-      '@scure/bip32': 1.1.5
+      '@scure/bip32': 1.1.4
       '@scure/bip39': 1.1.1
-      prettier: 2.8.4
-    dev: false
-
-  /prettier/2.8.4:
-    resolution: {integrity: sha512-vIS4Rlc2FNh0BySk3Wkd6xmwxB0FpOndW5fisM5H8hsZSxU2VWVB5CWIkIjWvrHjIhxk2g3bfMKM87zNTrZddw==}
-    engines: {node: '>=10.13.0'}
-    hasBin: true
     dev: false
 
   /tstl/2.5.13:
