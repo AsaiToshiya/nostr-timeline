@@ -4,6 +4,8 @@ import * as dotenv from "dotenv";
 dotenv.config();
 dotenv.config({ path: ".env.local", override: true });
 import { marked } from "marked";
+import { gfmHeadingId } from "marked-gfm-heading-id";
+import { mangle } from "marked-mangle";
 import { SimplePool, nip19 } from "nostr-tools";
 import "websocket-polyfill";
 
@@ -13,6 +15,8 @@ const PK = nip19.decode(process.env.NPUB).data;
 // リレー サーバー
 const RELAYS = JSON.parse(process.env.RELAYS.replace(/'/g, '"'));
 
+marked.use(gfmHeadingId());
+marked.use(mangle());
 marked.setOptions({
   breaks: true,
 });

@@ -4,6 +4,8 @@ specifiers:
   dotenv: ^16.0.3
   github-markdown-css: ^5.2.0
   marked: ^5.0.1
+  marked-gfm-heading-id: ^3.0.3
+  marked-mangle: ^1.0.1
   nostr-tools: ^1.10.1
   websocket-polyfill: ^0.0.3
 
@@ -11,6 +13,8 @@ dependencies:
   dotenv: 16.0.3
   github-markdown-css: 5.2.0
   marked: 5.0.1
+  marked-gfm-heading-id: 3.0.3_marked@5.0.1
+  marked-mangle: 1.0.1_marked@5.0.1
   nostr-tools: 1.10.1
   websocket-polyfill: 0.0.3
 
@@ -109,8 +113,29 @@ packages:
     resolution: {integrity: sha512-hq5RaCInSUZ48bImOZpkppW2/MT44StRgsbsZ8YA4vJFwLKB/Vo3k7R2t+pUGqO+ThG0QDMi96TewV/B3vyItg==}
     dev: false
 
+  /github-slugger/2.0.0:
+    resolution: {integrity: sha512-IaOQ9puYtjrkq7Y0Ygl9KDZnrf/aiUJYUpVf89y8kyaxbRG7Y1SrX/jaumrv81vc61+kiMempujsM3Yw7w5qcw==}
+    dev: false
+
   /is-typedarray/1.0.0:
     resolution: {integrity: sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA==}
+    dev: false
+
+  /marked-gfm-heading-id/3.0.3_marked@5.0.1:
+    resolution: {integrity: sha512-ouAOxtHYa34yFocjCk5xIIcEjg40YXNdpkfLqH6TGbkmXPMPxApWXLdOi0Z1AXUweMQC9bWt2e8MGrIYB2f6+w==}
+    peerDependencies:
+      marked: ^4 || ^5
+    dependencies:
+      github-slugger: 2.0.0
+      marked: 5.0.1
+    dev: false
+
+  /marked-mangle/1.0.1_marked@5.0.1:
+    resolution: {integrity: sha512-ZmWErsTkfE78OFgrpry2XGh+lYNRePfGy7bGh20l4rWHsH+bciKth1IHQXO9B6Ov5dHmY0jAswvgDxtcxGcFQQ==}
+    peerDependencies:
+      marked: ^4 || ^5
+    dependencies:
+      marked: 5.0.1
     dev: false
 
   /marked/5.0.1:
