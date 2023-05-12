@@ -6,7 +6,7 @@ dotenv.config({ path: ".env.local", override: true });
 import { marked } from "marked";
 import { gfmHeadingId } from "marked-gfm-heading-id";
 import { mangle } from "marked-mangle";
-import { SimplePool, nip19 } from "nostr-tools";
+import { SimplePool, nip19, parseReferences } from "nostr-tools";
 import "websocket-polyfill";
 
 // アカウントの公開鍵
@@ -229,35 +229,58 @@ const html =
     <body class="markdown-body">
       <h1>${date} のタイムライン</h1>
 ` +
-  filteredPosts
-    .map((post) => {
-      const npub = nip19.npubEncode(post.pubkey);
-      const author = profiles[post.pubkey] ?? {};
-      const displayName = author.display_name ?? author.displayName ?? "";
-      const name = author.name ?? author.username;
-      const content = marked.parse(
-        escape(post.content)
-          .replace(
-            /(https?:\/\/\S+\.(jpg|jpeg|png|webp|avif|gif))/g,
-            '<a href="$1"><img src="$1" loading="lazy"></a>'
-          )
-          .replace(
-            /NIP-(\d{2})/g,
-            '<a href="https://github.com/nostr-protocol/nips/blob/master/$1.md">$&</a>'
-          )
-          .replace(/^#+ /g, "\\$&")
-          .replace(
-            /DIP-(\d{2})/g,
-            '<a href="https://github.com/damus-io/dips/blob/master/$1.md">$&</a>'
-          )
-      );
-      const date = new Date(post.created_at * 1000);
-      const time = date.toLocaleTimeString();
-      return `      <p><a href="https://iris.to/${npub}">${displayName}@${name}</a></p>
-      ${content}
+  (
+    await Promise.all(
+      filteredPosts.map(async (post) => {
+        const npub = nip19.npubEncode(post.pubkey);
+        const author = profiles[post.pubkey] ?? {};
+        const displayName = author.display_name ?? author.displayName ?? "";
+        const name = author.name ?? author.username;
+        const content = marked.parse(
+          escape(post.content)
+            .replace(
+              /(https?:\/\/\S+\.(jpg|jpeg|png|webp|avif|gif))/g,
+              '<a href="$1"><img src="$1" loading="lazy"></a>'
+            )
+            .replace(
+              /NIP-(\d{2})/g,
+              '<a href="https://github.com/nostr-protocol/nips/blob/master/$1.md">$&</a>'
+            )
+            .replace(/^#+ /g, "\\$&")
+            .replace(
+              /DIP-(\d{2})/g,
+              '<a href="https://github.com/damus-io/dips/blob/master/$1.md">$&</a>'
+            )
+        );
+        const references = parseReferences(post);
+        const augmentedContent = await references.reduce(async (acc, obj) => {
+          const { text, profile } = obj;
+          const user =
+            profile &&
+            JSON.parse(
+              (
+                await pool.get(RELAYS, {
+                  authors: [profile.pubkey],
+                  kinds: [0],
+                  limit: 1,
+                })
+              ).content
+            );
+          const augmentedReference = user
+            ? `<a href="https://iris.to/${profile.pubkey}">@${
+                user.name ?? user.username
+              }</a>`
+            : text;
+          return (await acc).replaceAll(text, augmentedReference);
+        }, content);
+        const date = new Date(post.created_at * 1000);
+        const time = date.toLocaleTimeString();
+        return `      <p><a href="https://iris.to/${npub}">${displayName}@${name}</a></p>
+      ${augmentedContent ? augmentedContent : content}
       <p>${time}</p>`;
-    })
-    .join("\n") +
+      })
+    )
+  ).join("\n") +
   `
     </body>
   </html>`;
