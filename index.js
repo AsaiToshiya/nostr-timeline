@@ -255,17 +255,16 @@ const html =
         const references = parseReferences(post);
         const augmentedContent = await references.reduce(async (acc, obj) => {
           const { text, profile } = obj;
-          const user =
+          const userJson =
             profile &&
-            JSON.parse(
-              (
-                await pool.get(RELAYS, {
-                  authors: [profile.pubkey],
-                  kinds: [0],
-                  limit: 1,
-                })
-              ).content
-            );
+            (
+              await pool.get(RELAYS, {
+                authors: [profile.pubkey],
+                kinds: [0],
+                limit: 1,
+              })
+            )?.content;
+          const user = userJson && JSON.parse(userJson);
           const augmentedReference = user
             ? `<a href="https://iris.to/${profile.pubkey}">@${
                 user.name ?? user.username
