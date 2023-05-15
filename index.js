@@ -34,10 +34,13 @@ const _parseArgs = (args, option1, value1, option2, value2) => {
   const timeoutIndex = args.indexOf("-t") || args.indexOf("--timeout");
   const hasTimeout = timeoutIndex > -1;
   const timeout = hasTimeout ? args[timeoutIndex + 1] : 3 * 60 * 1000;
+  const sortIndex = args.indexOf("-s") || args.indexOf("--sort");
+  const sort = args[sortIndex + 1] == "asc" ? byCreateAt : byCreateAtDesc;
   return {
     todayUnixTime: getTomorrowWithoutTime(todayUnixTime) - 86400,
     excludeUsers,
     timeout,
+    sort,
   };
 };
 
@@ -102,7 +105,10 @@ const getTomorrowWithoutTime = (date) => {
 };
 
 const args = process.argv.slice(2);
-const { todayUnixTime, excludeUsers, timeout } = _parseArgs(args, ...args);
+const { todayUnixTime, excludeUsers, timeout, sort } = _parseArgs(
+  args,
+  ...args
+);
 const yesterdayUnixTime = todayUnixTime + 86400;
 const yesterday = new Date(todayUnixTime * 1000);
 
@@ -165,7 +171,7 @@ const posts = [
       .flat()
       .map((obj) => [obj.id, obj])
   ).values(),
-].sort(byCreateAtDesc);
+].sort(sort);
 
 // 投稿者の pubkey
 const postAuthors = posts.map((post) => post.pubkey);
