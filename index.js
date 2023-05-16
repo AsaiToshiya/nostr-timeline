@@ -272,10 +272,23 @@ const html =
             : text;
           return (await acc).replaceAll(text, augmentedReference);
         }, content);
+
+        // NIP-30
+        const emojifiedContent = post.tags
+          .filter((tag) => tag[0] == "emoji")
+          .reduce(
+            (acc, obj) =>
+              acc.replaceAll(
+                `:${obj[1]}:`,
+                `<img src="${obj[2]}" style="height: 1em; max-height: 1em;" loading="lazy">`
+              ),
+            augmentedContent
+          );
+
         const date = new Date(post.created_at * 1000);
         const time = date.toLocaleTimeString();
         return `      <p><a href="https://iris.to/${npub}">${displayName}@${name}</a></p>
-      ${augmentedContent ? augmentedContent : content}
+      ${augmentedContent ? emojifiedContent : content}
       <p>${time}</p>`;
       })
     )
