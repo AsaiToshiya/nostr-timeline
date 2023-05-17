@@ -24,13 +24,12 @@ const _parseArgs = (args, option1, value1, option2, value2) => {
       : option2 == "-d" || option2 == "--date"
       ? new Date(value2)
       : new Date();
-  const excludeUsers = (
+  const excludeUsers =
     option1 == "-e" || option1 == "--exclude"
       ? value1.split(",")
       : option2 == "-e" || option2 == "--exclude"
       ? value2.split(",")
-      : []
-  ).map((npub) => nip19.decode(npub).data);
+      : [];
   const timeoutIndex = args.indexOf("-t") || args.indexOf("--timeout");
   const hasTimeout = timeoutIndex > -1;
   const timeout = hasTimeout ? args[timeoutIndex + 1] : 3 * 60 * 1000;
@@ -111,6 +110,12 @@ const { todayUnixTime, excludeUsers, timeout, sort } = _parseArgs(
 );
 const yesterdayUnixTime = todayUnixTime + 86400;
 const yesterday = new Date(todayUnixTime * 1000);
+const exclusionNpubs = excludeUsers
+  .filter((value) => value.length == 63 && value.startsWith("npub"))
+  .map((npub) => nip19.decode(npub).data);
+const exclusionNames = excludeUsers.filter(
+  (value) => value.length != 63 || !value.startsWith("npub")
+);
 
 const pool = new SimplePool({
   eoseSubTimeout: timeout,
@@ -132,7 +137,7 @@ const following = (
 // フォローの pubkey
 const authors = following.tags
   ?.map((tag) => tag[1])
-  .filter((pk) => !excludeUsers.includes(pk));
+  .filter((pk) => !exclusionNpubs.includes(pk));
 
 // チャンク化する
 const chunkSize = 250;
@@ -191,6 +196,12 @@ const profiles = (
     {}
   );
 
+const filteredPosts = posts.filter((post) => {
+  const author = profiles[post.pubkey] ?? {};
+  const name = author.name ?? author.username;
+  return !exclusionNames.includes(name);
+});
+
 // HTML を作成する
 const date = yesterday.toLocaleDateString();
 const html =
@@ -230,7 +241,7 @@ const html =
     <body class="markdown-body">
       <h1>${date} のタイムライン</h1>
 ` +
-  posts
+  filteredPosts
     .map((post) => {
       const author = profiles[post.pubkey] ?? {};
       const displayName = author.display_name ?? author.displayName ?? "";
