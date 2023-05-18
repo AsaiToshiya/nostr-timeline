@@ -21,6 +21,26 @@ marked.setOptions({
   breaks: true,
 });
 
+const _parseArgs = (args) => {
+  const dateIndex = args.indexOf("-d") || args.indexOf("--date");
+  const todayUnixTime =
+    dateIndex > -1 ? new Date(args[dateIndex + 1]) : new Date();
+  const excludeIndex = args.indexOf("-e") || args.indexOf("--exclude");
+  const excludeUsers =
+    excludeIndex > -1 ? args[excludeIndex + 1].split(",") : [];
+  const timeoutIndex = args.indexOf("-t") || args.indexOf("--timeout");
+  const hasTimeout = timeoutIndex > -1;
+  const timeout = hasTimeout ? args[timeoutIndex + 1] : 3 * 60 * 1000;
+  const sortIndex = args.indexOf("-s") || args.indexOf("--sort");
+  const sort = args[sortIndex + 1] == "asc" ? byCreateAt : byCreateAtDesc;
+  return {
+    todayUnixTime: getTomorrowWithoutTime(todayUnixTime) - 86400,
+    excludeUsers,
+    timeout,
+    sort,
+  };
+};
+
 const byCreateAt = (a, b) => a.created_at - b.created_at;
 
 const byCreateAtDesc = (a, b) => b.created_at - a.created_at;
@@ -82,21 +102,9 @@ const getTomorrowWithoutTime = (date) => {
 };
 
 const args = process.argv;
-const [option1, value1, option2, value2] = args;
-const dateIndex = args.indexOf("-d") || args.indexOf("--date");
-const todayUnixTime =
-  dateIndex > -1
-    ? getTomorrowWithoutTime(new Date(args[dateIndex + 1]))
-    : getTomorrowWithoutTime(new Date());
-const excludeIndex = args.indexOf("-e") || args.indexOf("--exclude");
-const excludeUsers = excludeIndex > -1 ? args[excludeIndex + 1].split(",") : [];
-const timeoutIndex = args.indexOf("-t") || args.indexOf("--timeout");
-const hasTimeout = timeoutIndex > -1;
-const timeout = hasTimeout ? args[timeoutIndex + 1] : 3 * 60 * 1000;
-const sortIndex = args.indexOf("-s") || args.indexOf("--sort");
-const sort = args[sortIndex + 1] == "asc" ? byCreateAt : byCreateAtDesc;
-const yesterdayUnixTime = todayUnixTime - 86400;
-const yesterday = new Date(yesterdayUnixTime * 1000);
+const { todayUnixTime, excludeUsers, timeout, sort } = _parseArgs(args);
+const yesterdayUnixTime = todayUnixTime + 86400;
+const yesterday = new Date(todayUnixTime * 1000);
 const exclusionNpubs = excludeUsers
   .filter((value) => value.length == 63 && value.startsWith("npub"))
   .map((npub) => nip19.decode(npub).data);
@@ -152,8 +160,8 @@ const posts = [
                   await fetchPosts(
                     relay,
                     authors,
-                    yesterdayUnixTime - 1,
-                    todayUnixTime
+                    todayUnixTime - 1,
+                    yesterdayUnixTime
                   )
               )
             )
