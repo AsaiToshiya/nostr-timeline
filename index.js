@@ -17,7 +17,7 @@ marked.setOptions({
   breaks: true,
 });
 
-const _parseArgs = (args, option1, value1, option2, value2) => {
+const _parseArgs = (args) => {
   const dateIndex = args.indexOf("-d") || args.indexOf("--date");
   const todayUnixTime =
     dateIndex > -1 ? new Date(args[dateIndex + 1]) : new Date();
@@ -98,10 +98,7 @@ const getTomorrowWithoutTime = (date) => {
 };
 
 const args = process.argv.slice(2);
-const { todayUnixTime, excludeUsers, timeout, sort } = _parseArgs(
-  args,
-  ...args
-);
+const { todayUnixTime, excludeUsers, timeout, sort } = _parseArgs(args);
 const yesterdayUnixTime = todayUnixTime + 86400;
 const yesterday = new Date(todayUnixTime * 1000);
 const exclusionNpubs = excludeUsers
