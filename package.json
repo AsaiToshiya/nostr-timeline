@@ -8,7 +8,8 @@
     "node-boilerplate": "./index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "copyfiles -f ./node_modules/github-markdown-css/github-markdown.css ."
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "node": ">=14.16"
   },
   "dependencies": {
+    "copyfiles": "^2.4.1",
     "dotenv": "^16.0.3",
     "github-markdown-css": "^5.2.0",
     "marked": "^5.0.1",
