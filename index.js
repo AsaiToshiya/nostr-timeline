@@ -262,7 +262,7 @@ const html =
         );
         const references = parseReferences(post);
         const augmentedContent = await references.reduce(async (acc, obj) => {
-          const { text, profile } = obj;
+          const { text, profile, event } = obj;
           const userJson =
             profile &&
             (
@@ -277,6 +277,10 @@ const html =
             ? `<a href="https://iris.to/${profile.pubkey}">@${
                 user.name ?? user.username
               }</a>`
+            : event
+            ? `<a href="https://iris.to/${nip19.noteEncode(
+                event.id
+              )}">${text}</a>`
             : text;
           return (await acc).replaceAll(text, augmentedReference);
         }, content);
