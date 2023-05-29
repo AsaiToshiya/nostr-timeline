@@ -84,13 +84,6 @@ const fetchPosts = async (relay, authors, since, until, olderPost) => {
 };
 
 // UNIX 時間を返す
-const getTodayWithoutTime = () => {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  return Math.floor(today.getTime() / 1000);
-};
-
-// UNIX 時間を返す
 const getTomorrowWithoutTime = (date) => {
   const tomorrow = new Date(
     date.getFullYear(),
