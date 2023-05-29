@@ -34,7 +34,7 @@ const _parseArgs = (args) => {
   const sortIndex = args.indexOf("-s") || args.indexOf("--sort");
   const sort = args[sortIndex + 1] == "asc" ? byCreateAt : byCreateAtDesc;
   return {
-    todayUnixTime: getTomorrowWithoutTime(todayUnixTime) - 86400,
+    todayUnixTime: getTomorrowWithoutTime(todayUnixTime),
     excludeUsers,
     timeout,
     sort,
@@ -90,7 +90,6 @@ const getTomorrowWithoutTime = (date) => {
     date.getMonth(),
     date.getDate()
   );
-  tomorrow.setDate(tomorrow.getDate() + 1);
   return Math.floor(tomorrow.getTime() / 1000);
 };
 
