@@ -41,6 +41,60 @@ const _parseArgs = (args) => {
   };
 };
 
+const _renderContent = async (post) => {
+  const content = marked.parse(
+    escape(post.content)
+      .replace(
+        /(https?:\/\/\S+\.(jpg|jpeg|png|webp|avif|gif))/g,
+        '<a href="$1"><img src="$1" loading="lazy"></a>'
+      )
+      .replace(
+        /NIP-(\d{2})/g,
+        '<a href="https://github.com/nostr-protocol/nips/blob/master/$1.md">$&</a>'
+      )
+      .replace(/^#+ /g, "\\$&")
+      .replace(
+        /DIP-(\d{2})/g,
+        '<a href="https://github.com/damus-io/dips/blob/master/$1.md">$&</a>'
+      )
+  );
+  const references = parseReferences(post);
+  const augmentedContent = await references.reduce(async (acc, obj) => {
+    const { text, profile, event } = obj;
+    const userJson =
+      profile &&
+      (
+        await pool.get(RELAYS, {
+          authors: [profile.pubkey],
+          kinds: [0],
+          limit: 1,
+        })
+      )?.content;
+    const user = userJson && JSON.parse(userJson);
+    const augmentedReference = user
+      ? `<a href="https://iris.to/${profile.pubkey}">@${
+          user.name ?? user.username
+        }</a>`
+      : event
+      ? `<a href="https://iris.to/${nip19.noteEncode(event.id)}">${text}</a>`
+      : text;
+    return (await acc).replaceAll(text, augmentedReference);
+  }, content);
+
+  // NIP-30
+  const emojifiedContent = post.tags
+    .filter((tag) => tag[0] == "emoji")
+    .reduce(
+      (acc, obj) =>
+        acc.replaceAll(
+          `:${obj[1]}:`,
+          `<img src="${obj[2]}" style="height: 1em; max-height: 1em;" loading="lazy">`
+        ),
+      augmentedContent
+    );
+  return augmentedContent ? emojifiedContent : content;
+};
+
 const byCreateAt = (a, b) => a.created_at - b.created_at;
 
 const byCreateAtDesc = (a, b) => b.created_at - a.created_at;
@@ -236,63 +290,11 @@ const html =
         const author = profiles[post.pubkey] ?? {};
         const displayName = author.display_name ?? author.displayName ?? "";
         const name = author.name ?? author.username;
-        const content = marked.parse(
-          escape(post.content)
-            .replace(
-              /(https?:\/\/\S+\.(jpg|jpeg|png|webp|avif|gif))/g,
-              '<a href="$1"><img src="$1" loading="lazy"></a>'
-            )
-            .replace(
-              /NIP-(\d{2})/g,
-              '<a href="https://github.com/nostr-protocol/nips/blob/master/$1.md">$&</a>'
-            )
-            .replace(/^#+ /g, "\\$&")
-            .replace(
-              /DIP-(\d{2})/g,
-              '<a href="https://github.com/damus-io/dips/blob/master/$1.md">$&</a>'
-            )
-        );
-        const references = parseReferences(post);
-        const augmentedContent = await references.reduce(async (acc, obj) => {
-          const { text, profile, event } = obj;
-          const userJson =
-            profile &&
-            (
-              await pool.get(RELAYS, {
-                authors: [profile.pubkey],
-                kinds: [0],
-                limit: 1,
-              })
-            )?.content;
-          const user = userJson && JSON.parse(userJson);
-          const augmentedReference = user
-            ? `<a href="https://iris.to/${profile.pubkey}">@${
-                user.name ?? user.username
-              }</a>`
-            : event
-            ? `<a href="https://iris.to/${nip19.noteEncode(
-                event.id
-              )}">${text}</a>`
-            : text;
-          return (await acc).replaceAll(text, augmentedReference);
-        }, content);
-
-        // NIP-30
-        const emojifiedContent = post.tags
-          .filter((tag) => tag[0] == "emoji")
-          .reduce(
-            (acc, obj) =>
-              acc.replaceAll(
-                `:${obj[1]}:`,
-                `<img src="${obj[2]}" style="height: 1em; max-height: 1em;" loading="lazy">`
-              ),
-            augmentedContent
-          );
 
         const date = new Date(post.created_at * 1000);
         const time = date.toLocaleTimeString();
         return `      <p><a href="https://iris.to/${npub}">${displayName}@${name}</a></p>
-      ${augmentedContent ? emojifiedContent : content}
+      ${await _renderContent(post)}
       <p>${time}</p>`;
       })
     )
