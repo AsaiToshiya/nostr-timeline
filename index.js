@@ -34,9 +34,7 @@ const _parseArgs = (args) => {
   const sortIndex = args.indexOf("-s") || args.indexOf("--sort");
   const sort = args[sortIndex + 1] == "asc" ? byCreateAt : byCreateAtDesc;
   return {
-    todayUnixTime: Math.floor(
-      getTomorrowWithoutTime(todayUnixTime).getTime() / 1000
-    ),
+    todayUnixTime: Math.floor(withoutTime(todayUnixTime).getTime() / 1000),
     excludeUsers,
     timeout,
     sort,
@@ -140,7 +138,7 @@ const fetchPosts = async (relay, authors, since, until, olderPost) => {
 };
 
 // UNIX 時間を返す
-const getTomorrowWithoutTime = (date) => {
+const withoutTime = (date) => {
   const tomorrow = new Date(
     date.getFullYear(),
     date.getMonth(),
