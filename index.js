@@ -242,8 +242,10 @@ const html =
       filteredPosts.map(async (post) => {
         const npub = nip19.npubEncode(post.pubkey);
         const author = profiles[post.pubkey] ?? {};
-        const displayName = author.display_name ?? author.displayName ?? "";
-        const name = author.name ?? author.username;
+        const displayName = escape(
+          author.display_name ?? author.displayName ?? ""
+        );
+        const name = escape(author.name ?? author.username);
         const content = marked.parse(
           escape(post.content)
             .replace(
