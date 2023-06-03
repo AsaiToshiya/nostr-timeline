@@ -47,11 +47,13 @@ const byCreateAtDesc = (a, b) => b.created_at - a.created_at;
 
 const escape = (s) =>
   s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    ? s
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+    : s;
 
 const fetchPosts = async (relay, authors, since, until, olderPost) => {
   const posts = (
