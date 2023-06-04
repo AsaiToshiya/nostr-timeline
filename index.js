@@ -278,9 +278,9 @@ const html =
             )?.content;
           const user = userJson && JSON.parse(userJson);
           const augmentedReference = user
-            ? `<a href="https://iris.to/${profile.pubkey}">@${
+            ? `<a href="https://iris.to/${profile.pubkey}">@${escape(
                 user.name ?? user.username
-              }</a>`
+              )}</a>`
             : event
             ? `<a href="https://iris.to/${nip19.noteEncode(
                 event.id
