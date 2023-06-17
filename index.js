@@ -125,6 +125,7 @@ const following = (
     {
       authors: [PK],
       kinds: [3],
+      limit: 1,
     },
   ])
 )
