@@ -185,6 +185,7 @@ const profiles = (
     {
       authors: postAuthors,
       kinds: [0],
+      limit: 1,
     },
   ])
 )
