@@ -303,7 +303,7 @@ const html =
 
         const date = new Date(post.created_at * 1000);
         const time = date.toLocaleTimeString();
-        return `      <p><a href="https://snort.social/p/${npub}">${displayName}@${name}</a></p>
+        return `      <p><a href="https://nostr.com/${npub}">${displayName}@${name}</a></p>
       ${augmentedContent ? emojifiedContent : content}
       <p>${time}</p>`;
       })
