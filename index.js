@@ -305,7 +305,9 @@ const html =
         const time = date.toLocaleTimeString();
         return `      <p><a href="https://njump.me/${npub}">${displayName}@${name}</a></p>
       ${augmentedContent ? emojifiedContent : content}
-      <p>${time}</p>`;
+      <p><a href="https://njump.me/${nip19.neventEncode({
+        id: post.id,
+      })}">${time}</a></p>`;
       })
     )
   ).join("\n") +
